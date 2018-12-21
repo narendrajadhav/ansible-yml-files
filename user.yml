@@ -1,0 +1,47 @@
+---
+
+- hosts: synechron
+
+  vars:
+    user: "{{ demo }}"
+  
+  tasks: 
+    - name: creating user "{{ user }}"
+      user: name="{{ user }}" state=present
+
+    - name: creatiing another user
+      user: 
+        name: synnaru2
+        state: present 
+
+
+    - name: Creating Group for next task
+      group: name=syn state=present
+
+    - name: Creating one more user
+      user: name=synnaru3 group=syn state=present
+
+    - name: Installing NTP
+      yum: name=ntp state=present
+
+    - name: Checking NTP Service
+      service: name=ntpd state=started enabled=true
+
+    - name: File creation
+      file: path=/var/tmp/synfile mode=0777 state=touch
+    
+    - name: Directory Creation
+      file: path=/var/tmp/syn mode=0777 state=directory
+    
+    - name: NTP configuration
+      #file: path=/etc/ntp.conf state=file
+      copy: 
+        src: ntp.conf
+        dest: /etc/ntp.conf        
+      notify:
+        - restart NTP
+
+  handlers:
+
+     - name: restart NTP
+       service: name=ntpd state=restarted 

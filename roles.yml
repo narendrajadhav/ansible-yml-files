@@ -1,0 +1,6 @@
+---
+
+- hosts: synechron
+  
+  roles: 
+    - create-user
